@@ -62,7 +62,53 @@ TP2-SOA/
                 └── ServeurJWS.java
 ```
 
-## 5. Implémentation
+## 5. Fonctionnement d'un Web Service dans une architecture SOA
+
+### 5.1. Cas général : Architecture SOA
+
+Un service Web SOAP met en relation trois acteurs :
+
+* Serveur (Provider) : crée le service Web et génère son contrat WSDL.
+
+* Annuaire UDDI (Registry) : permet de publier et de rechercher les services Web.
+
+* Client (Consumer) : recherche et utilise le service Web.
+
+Le fonctionnement se déroule en cinq étapes :
+
+1. Le serveur crée le service Web, génère son contrat WSDL et le publie dans l'annuaire UDDI.
+
+2. Le client interroge l'annuaire pour trouver le service dont il a besoin.
+
+3. L'annuaire renvoie les informations du service ainsi que son contrat WSDL. Ce contrat décrit les types de données, les messages, les opérations, le protocole et l'adresse du service.
+
+4. Le client utilise le WSDL pour envoyer une requête HTTP contenant un message SOAP au serveur.
+
+5. Le serveur traite la requête et retourne une réponse HTTP contenant le résultat sous forme d'un message SOAP.
+
+![Schema Architcture Genrale](screenshots/schema_general_service_web_soap.png)
+
+### 5.2. Cas pratique : Service Web SOAP Calculatrice
+1. Le serveur crée le service Web à partir d'une classe Java Calculatrice, annotée @WebService.
+
+2. La méthode somme(int a, int b), annotée @WebMethod, est exposée aux clients. Elle prend deux entiers et retourne leur somme.
+
+3. Le serveur génère automatiquement le contrat WSDL du service. Celui-ci décrit l'opération somme, ses paramètres, son type de retour et l'adresse du service.
+
+4. Le WSDL généré est publié dans l'annuaire UDDI (1).
+ 
+5. Le client SoapUI interroge l'annuaire pour rechercher le service « Calculatrice » (2).
+ 
+6. L'annuaire lui renvoie les informations du service et son contrat WSDL (3). Ce contrat indique que l'opération somme prend deux entiers et retourne un entier.
+
+7. Grâce au WSDL, le client sait comment construire sa requête. Il envoie une requête HTTP contenant un message SOAP avec a = 5 et b = 3 (4).
+
+8. Le serveur reçoit la requête, exécute somme(5, 3) et calcule le résultat.
+
+9. Le serveur renvoie une réponse HTTP contenant un message SOAP avec le résultat 8 (5).
+
+![Schema Architecture SOA pour Calculatrice](screenshots/schema_calculatrice_detaille_soap.png)
+## 6. Implémentation
 
 ### Interface ICalculatrice
 
@@ -84,7 +130,7 @@ La classe `ServeurJWS` publie le service Web à l'aide de `Endpoint.publish()`.
 ![Serveur SOAP en cours d'exécution](screenshots/server-running.png)
 
 
-## 6. Consultation du WSDL
+## 7. Consultation du WSDL
 
 Le WSDL décrit le contrat du service Web : ses opérations, ses paramètres et les messages échangés entre le client et le serveur.
 
@@ -94,7 +140,7 @@ Adresse du WSDL :
 
 ![WSDL du service](screenshots/wsdl.png)
 
-## 7. Tests avec SoapUI
+## 8. Tests avec SoapUI
 
 Le service est testé à l'aide de SoapUI en envoyant des requêtes SOAP et en vérifiant les réponses obtenues.
 
@@ -130,7 +176,7 @@ Résultat attendu : `3.5`
 
 ![Test de la division](screenshots/division.png)
 
-## 8. Résultats
+## 9. Résultats
 
 Les tests permettent de vérifier que les quatre opérations sont accessibles via le service Web SOAP et que les résultats retournés correspondent aux valeurs attendues.
 
